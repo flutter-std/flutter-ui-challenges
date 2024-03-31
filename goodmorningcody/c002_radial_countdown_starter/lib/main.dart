@@ -20,8 +20,14 @@ class MainApp extends StatelessWidget {
       home: Scaffold(
         body: Center(
           child: SizedBox(
-            width: 300,
-            child: CountdownAndRestart(),
+            width: 300, // max allowed width
+            child: SingleChildScrollView(
+              physics: NeverScrollableScrollPhysics(),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: CountdownAndRestart(),
+              ),
+            ),
           ),
         ),
       ),
@@ -78,66 +84,63 @@ class CountdownAndRestartState extends State<CountdownAndRestart>
   @override
   Widget build(BuildContext context) {
     const circleRatio = _maxWidth - _circleStrokeWidth;
-    return SingleChildScrollView(
-      physics: const NeverScrollableScrollPhysics(),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Stack(
-              children: [
-                CircleHolder(
-                    builder: (context) {
-                      return Center(
-                        child: Text(
-                          "${_maxDuration.inSeconds - _elapsed.inSeconds}",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 100,
-                            color: CircleColors.foreground,
-                          ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.all(10),
+          child: Stack(
+            children: [
+              CircleHolder(
+                  builder: (context) {
+                    return Center(
+                      child: Text(
+                        "${_maxDuration.inSeconds - _elapsed.inSeconds}",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 100,
+                          color: CircleColors.foreground,
                         ),
-                      );
-                    },
-                    ratio: circleRatio),
-                CircleHolder(
-                  builder: (context) {
-                    return const CircularProgressIndicator(
-                      color: CircleColors.background,
-                      strokeWidth: _circleStrokeWidth,
-                      value: 1,
+                      ),
                     );
                   },
-                  ratio: circleRatio,
-                ),
-                CircleHolder(
-                  builder: (context) {
-                    return CircularProgressIndicator(
-                      color: CircleColors.foreground,
-                      strokeWidth: _circleStrokeWidth,
-                      value: _countDownProgress,
-                    );
-                  },
-                  ratio: circleRatio,
-                ),
-              ],
-            ),
+                  ratio: circleRatio),
+              CircleHolder(
+                builder: (context) {
+                  return const CircularProgressIndicator(
+                    color: CircleColors.background,
+                    strokeWidth: _circleStrokeWidth,
+                    value: 1,
+                  );
+                },
+                ratio: circleRatio,
+              ),
+              CircleHolder(
+                builder: (context) {
+                  return CircularProgressIndicator(
+                    color: CircleColors.foreground,
+                    strokeWidth: _circleStrokeWidth,
+                    value: _countDownProgress,
+                  );
+                },
+                ratio: circleRatio,
+              ),
+            ],
           ),
-          const SizedBox(height: 32),
-          ElevatedButton(
-            onPressed: _startCountdown,
-            child: const Text(
-              'Restart',
-              style: TextStyle(fontSize: 32),
-              textAlign: TextAlign.center,
-            ),
+        ),
+        const SizedBox(height: 32),
+        ElevatedButton(
+          onPressed: _startCountdown,
+          child: const Text(
+            'Restart',
+            style: TextStyle(fontSize: 32),
+            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
-        ],
-      ),
+        ),
+        const SizedBox(height: 16),
+      ],
     );
   }
 }
