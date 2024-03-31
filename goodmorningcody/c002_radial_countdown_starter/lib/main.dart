@@ -88,7 +88,6 @@ class CountdownAndRestartState extends State<CountdownAndRestart>
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.all(10),
           child: Stack(
@@ -139,7 +138,6 @@ class CountdownAndRestartState extends State<CountdownAndRestart>
             textAlign: TextAlign.center,
           ),
         ),
-        const SizedBox(height: 16),
       ],
     );
   }
