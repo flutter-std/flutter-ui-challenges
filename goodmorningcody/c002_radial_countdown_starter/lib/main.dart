@@ -93,25 +93,16 @@ class CountdownAndRestartState extends State<CountdownAndRestart>
           child: Stack(
             children: [
               CircleHolder(
-                  builder: (context) {
-                    return Center(
-                      child: Text(
-                        "${_maxDuration.inSeconds - _elapsed.inSeconds}",
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 100,
-                          color: CircleColors.foreground,
-                        ),
-                      ),
-                    );
-                  },
-                  ratio: circleRatio),
-              CircleHolder(
                 builder: (context) {
-                  return const CircularProgressIndicator(
-                    color: CircleColors.background,
-                    strokeWidth: _circleStrokeWidth,
-                    value: 1,
+                  return Center(
+                    child: Text(
+                      "${_maxDuration.inSeconds - _elapsed.inSeconds}",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 100,
+                        color: CircleColors.foreground,
+                      ),
+                    ),
                   );
                 },
                 ratio: circleRatio,
@@ -119,6 +110,7 @@ class CountdownAndRestartState extends State<CountdownAndRestart>
               CircleHolder(
                 builder: (context) {
                   return CircularProgressIndicator(
+                    backgroundColor: CircleColors.background,
                     color: CircleColors.foreground,
                     strokeWidth: _circleStrokeWidth,
                     value: _countDownProgress,
