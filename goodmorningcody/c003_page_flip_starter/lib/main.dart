@@ -76,7 +76,6 @@ class LerpValue {
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late AnimationController _animationController;
-  double _latestAnimationControllerValue = -1;
   PageTheme homeTheme = PageTheme.light;
 
   void _onFlip() {
@@ -92,14 +91,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   void _onChangedAnimation() {
-    if (_animationController.value >= 0 &&
-        _latestAnimationControllerValue < 0) {
+    if (_animationController.value >= 0 && homeTheme == PageTheme.light) {
       setState(() => homeTheme = PageTheme.dark);
-    } else if (_animationController.value < 0 &&
-        _latestAnimationControllerValue >= 0) {
+    } else if (_animationController.value < 0 && homeTheme == PageTheme.dark) {
       setState(() => homeTheme = PageTheme.light);
     }
-    _latestAnimationControllerValue = _animationController.value;
   }
 
   double _lerpDegree(
@@ -133,7 +129,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
-      value: _latestAnimationControllerValue,
+      value: -1,
       lowerBound: -1,
       upperBound: 1,
     );
