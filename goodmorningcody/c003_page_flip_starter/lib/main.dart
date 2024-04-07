@@ -76,14 +76,14 @@ class LerpValue {
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late AnimationController _animationController;
-  PageTheme homeTheme = PageTheme.light;
+  PageTheme pageTheme = PageTheme.light;
 
   void _onFlip() {
     if (_animationController.isAnimating) {
       return;
     }
 
-    if (homeTheme == PageTheme.light) {
+    if (pageTheme == PageTheme.light) {
       _animationController.forward();
     } else {
       _animationController.reverse();
@@ -91,10 +91,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   void _onChangedAnimation() {
-    if (_animationController.value >= 0 && homeTheme == PageTheme.light) {
-      setState(() => homeTheme = PageTheme.dark);
-    } else if (_animationController.value < 0 && homeTheme == PageTheme.dark) {
-      setState(() => homeTheme = PageTheme.light);
+    if (_animationController.value >= 0 && pageTheme == PageTheme.light) {
+      setState(() => pageTheme = PageTheme.dark);
+    } else if (_animationController.value < 0 && pageTheme == PageTheme.dark) {
+      setState(() => pageTheme = PageTheme.light);
     }
   }
 
@@ -148,7 +148,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _animationController,
-      child: homeTheme == PageTheme.light
+      child: pageTheme == PageTheme.light
           ? LightHomePage(onFlip: _onFlip)
           : DarkHomePage(onFlip: _onFlip),
       builder: (BuildContext context, Widget? child) {
@@ -167,7 +167,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ..rotateY(radian),
           alignment: FractionalOffset.center,
           child: Transform.flip(
-            flipX: homeTheme == PageTheme.dark,
+            flipX: pageTheme == PageTheme.dark,
             child: child,
           ),
         );
