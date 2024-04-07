@@ -56,7 +56,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-enum HomeTheme {
+enum PageTheme {
   light,
   dark,
 }
@@ -77,14 +77,14 @@ class LerpValue {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late AnimationController _animationController;
   double _latestAnimationControllerValue = -1;
-  HomeTheme homeTheme = HomeTheme.light;
+  PageTheme homeTheme = PageTheme.light;
 
   void _onFlip() {
     if (_animationController.isAnimating) {
       return;
     }
 
-    if (homeTheme == HomeTheme.light) {
+    if (homeTheme == PageTheme.light) {
       _animationController.forward();
     } else {
       _animationController.reverse();
@@ -94,10 +94,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void _onChangedAnimation() {
     if (_animationController.value >= 0 &&
         _latestAnimationControllerValue < 0) {
-      setState(() => homeTheme = HomeTheme.dark);
+      setState(() => homeTheme = PageTheme.dark);
     } else if (_animationController.value < 0 &&
         _latestAnimationControllerValue >= 0) {
-      setState(() => homeTheme = HomeTheme.light);
+      setState(() => homeTheme = PageTheme.light);
     }
     _latestAnimationControllerValue = _animationController.value;
   }
@@ -152,7 +152,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _animationController,
-      child: homeTheme == HomeTheme.light
+      child: homeTheme == PageTheme.light
           ? LightHomePage(onFlip: _onFlip)
           : DarkHomePage(onFlip: _onFlip),
       builder: (BuildContext context, Widget? child) {
@@ -171,7 +171,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ..rotateY(radian),
           alignment: FractionalOffset.center,
           child: Transform.flip(
-            flipX: homeTheme == HomeTheme.dark,
+            flipX: homeTheme == PageTheme.dark,
             child: child,
           ),
         );
