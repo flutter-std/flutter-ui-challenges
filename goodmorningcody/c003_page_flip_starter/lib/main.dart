@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:page_flip/page_flip_builder.dart';
 
 Future<void> preloadSVGs() async {
   final svgList = [
@@ -53,9 +54,15 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Create PageFlipBuilder widget that can be used to flip between
-    // LightHomePage and DarkHomePage
-    return const LightHomePage();
+    final flipKey = GlobalKey<PageFlipBuilderState>();
+    return PageFlipBuilder(
+      key: flipKey,
+      builder: (context, flipState) {
+        return flipState == FlipState.front
+            ? LightHomePage(onFlip: flipKey.currentState?.flip)
+            : DarkHomePage(onFlip: flipKey.currentState?.flip);
+      },
+    );
   }
 }
 
