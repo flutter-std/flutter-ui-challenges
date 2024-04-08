@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:page_flip/main.dart';
 import 'dart:math' as math;
 
 class NumConverter {
@@ -21,18 +20,19 @@ enum PageTheme {
 }
 
 class PageFlipBuilder extends StatefulWidget {
-  const PageFlipBuilder({super.key});
+  final Widget Function(BuildContext context, PageTheme pageTheme) builder;
+  const PageFlipBuilder({super.key, required this.builder});
 
   @override
-  State<PageFlipBuilder> createState() => _PageFlipBuilderState();
+  State<PageFlipBuilder> createState() => PageFlipBuilderState();
 }
 
-class _PageFlipBuilderState extends State<PageFlipBuilder>
+class PageFlipBuilderState extends State<PageFlipBuilder>
     with TickerProviderStateMixin {
   late AnimationController _animationController;
   PageTheme pageTheme = PageTheme.light;
 
-  void _onFlip() {
+  void flip() {
     if (_animationController.isAnimating) {
       return;
     }
@@ -102,9 +102,7 @@ class _PageFlipBuilderState extends State<PageFlipBuilder>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _animationController,
-      child: pageTheme == PageTheme.light
-          ? LightHomePage(onFlip: _onFlip)
-          : DarkHomePage(onFlip: _onFlip),
+      child: widget.builder(context, pageTheme),
       builder: (BuildContext context, Widget? child) {
         var scale = _lerpScale(_animationController.value);
         var radian = NumConverter.toRadian(
