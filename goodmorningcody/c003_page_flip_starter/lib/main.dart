@@ -57,8 +57,8 @@ class HomePage extends StatelessWidget {
     final flipKey = GlobalKey<PageFlipBuilderState>();
     return PageFlipBuilder(
       key: flipKey,
-      builder: (context, pageTheme) {
-        return pageTheme == PageTheme.light
+      builder: (context, flipState) {
+        return flipState == FlipState.front
             ? LightHomePage(onFlip: flipKey.currentState?.flip)
             : DarkHomePage(onFlip: flipKey.currentState?.flip);
       },

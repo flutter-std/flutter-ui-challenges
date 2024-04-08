@@ -14,13 +14,13 @@ class LerpValue {
   LerpValue({required this.range, required this.value});
 }
 
-enum PageTheme {
-  light,
-  dark,
+enum FlipState {
+  front,
+  back,
 }
 
 class PageFlipBuilder extends StatefulWidget {
-  final Widget Function(BuildContext context, PageTheme pageTheme) builder;
+  final Widget Function(BuildContext context, FlipState flipState) builder;
   const PageFlipBuilder({super.key, required this.builder});
 
   @override
@@ -30,14 +30,14 @@ class PageFlipBuilder extends StatefulWidget {
 class PageFlipBuilderState extends State<PageFlipBuilder>
     with TickerProviderStateMixin {
   late AnimationController _animationController;
-  PageTheme pageTheme = PageTheme.light;
+  FlipState flipState = FlipState.front;
 
   void flip() {
     if (_animationController.isAnimating) {
       return;
     }
 
-    if (pageTheme == PageTheme.light) {
+    if (flipState == FlipState.front) {
       _animationController.forward();
     } else {
       _animationController.reverse();
@@ -45,34 +45,39 @@ class PageFlipBuilderState extends State<PageFlipBuilder>
   }
 
   void _onChangedAnimation() {
-    if (_animationController.value >= 0 && pageTheme == PageTheme.light) {
-      setState(() => pageTheme = PageTheme.dark);
-    } else if (_animationController.value < 0 && pageTheme == PageTheme.dark) {
-      setState(() => pageTheme = PageTheme.light);
+    if (_animationController.value >= 0 && flipState == FlipState.front) {
+      setState(() => flipState = FlipState.back);
+    } else if (_animationController.value < 0 && flipState == FlipState.back) {
+      setState(() => flipState = FlipState.front);
     }
   }
 
   double _lerpDegree(
-    double degree,
     LerpValue min,
     LerpValue max,
   ) {
+    final value = _animationController.value;
     return min.value +
-        (degree - min.range) *
-            (max.value - min.value) /
-            (max.range - min.range);
+        (value - min.range) * (max.value - min.value) / (max.range - min.range);
   }
 
-  double _lerpScale(double scale) {
+  double _lerpScale(
+    LerpValue p1,
+    LerpValue p2,
+    LerpValue p3,
+  ) {
+    final value = _animationController.value;
     double scaleLinear;
-    if (scale == -1 || scale == 1) {
-      scaleLinear = 0;
-    } else if (scale == 0) {
-      scaleLinear = -1.0;
-    } else if (scale < 0) {
-      scaleLinear = -(1 + scale);
+    if (value == p1.range) {
+      scaleLinear = p1.value;
+    } else if (value == p3.range) {
+      scaleLinear = p3.value;
+    } else if (value == p2.range) {
+      scaleLinear = p2.value;
+    } else if (value < p2.range) {
+      scaleLinear = -((p1.value - p2.value) + value);
     } else {
-      scaleLinear = -1 + scale;
+      scaleLinear = (p2.value - p3.value) + value;
     }
     return 1 + scaleLinear * 0.1;
   }
@@ -102,12 +107,15 @@ class PageFlipBuilderState extends State<PageFlipBuilder>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _animationController,
-      child: widget.builder(context, pageTheme),
+      child: widget.builder(context, flipState),
       builder: (BuildContext context, Widget? child) {
-        var scale = _lerpScale(_animationController.value);
+        var scale = _lerpScale(
+          LerpValue(range: -1, value: 0),
+          LerpValue(range: 0, value: -1),
+          LerpValue(range: 1, value: 0),
+        );
         var radian = NumConverter.toRadian(
           _lerpDegree(
-            _animationController.value,
             LerpValue(range: -1, value: 0),
             LerpValue(range: 1, value: -180),
           ),
@@ -119,7 +127,7 @@ class PageFlipBuilderState extends State<PageFlipBuilder>
             ..rotateY(radian),
           alignment: FractionalOffset.center,
           child: Transform.flip(
-            flipX: pageTheme == PageTheme.dark,
+            flipX: flipState == FlipState.back,
             child: child,
           ),
         );
