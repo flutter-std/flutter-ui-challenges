@@ -1,3 +1,4 @@
+import 'package:c004_covid19_dashboard/covid_card.dart';
 import 'package:flutter/material.dart';
 
 /// A type representing the various available data points
@@ -60,7 +61,20 @@ class Dashboard extends StatelessWidget {
       51245,
       7452340,
     ];
-    // TODO: Implement UI
-    return const Placeholder();
+    const dataPoints = DataPoint.values;
+    return ListView.separated(
+      itemCount: dataPoints.length,
+      itemBuilder: (BuildContext context, int index) {
+        return CovidCard(
+          dataPoint: dataPoints[index],
+          value: values[index],
+        );
+      },
+      separatorBuilder: (BuildContext context, int index) {
+        return const SizedBox(
+          height: 10,
+        );
+      },
+    );
   }
 }
