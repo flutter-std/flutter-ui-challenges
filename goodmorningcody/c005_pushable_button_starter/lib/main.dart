@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 void main() {
   runApp(const MainApp());
@@ -138,16 +140,83 @@ class PushableButton extends StatefulWidget {
   State<PushableButton> createState() => _PushableButtonState();
 }
 
-class _PushableButtonState extends State<PushableButton> {
+class _PushableButtonState extends State<PushableButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      value: 0,
+      duration: const Duration(milliseconds: 50),
+      lowerBound: 0,
+      upperBound: 1,
+    );
+  }
+
+  _stopIfAnimating() {
+    if (_animationController.isAnimating) {
+      _animationController.stop();
+    }
+  }
+
+  _playButtonDown() {
+    _stopIfAnimating();
+    _animationController.forward();
+  }
+
+  _playButtonUp() {
+    _stopIfAnimating();
+    _animationController.forward();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // TODO: replace with custom button UI and animations
-    return ElevatedButton(
-      onPressed: widget.onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: widget.hslColor.toColor(),
+    return GestureDetector(
+      onTapDown: (details) {
+        _playButtonDown();
+        widget.onPressed?.call();
+      },
+      onTapUp: (details) => _playButtonUp(),
+      onPanEnd: (details) => _playButtonUp(),
+      child: Stack(
+        children: [
+          Container(
+            height: widget.height,
+            decoration: BoxDecoration(
+              color: widget.hslColor.withLightness(0.3).toColor(),
+              borderRadius: BorderRadius.circular(widget.height / 2),
+              boxShadow:
+                  widget.shadow == null ? List.empty() : [widget.shadow!],
+            ),
+          ),
+          AnimatedBuilder(
+            animation: _animationController,
+            child: Container(
+              height: widget.height,
+              decoration: BoxDecoration(
+                color: widget.hslColor.toColor(),
+                borderRadius: BorderRadius.circular(widget.height / 2),
+              ),
+              child: Center(
+                child: widget.child,
+              ),
+            ),
+            builder: (context, child) {
+              return Transform.translate(
+                offset: Offset(
+                  0,
+                  -widget.elevation +
+                      _animationController.value * widget.elevation,
+                ),
+                child: child,
+              );
+            },
+          ),
+        ],
       ),
-      child: widget.child,
     );
   }
 }
