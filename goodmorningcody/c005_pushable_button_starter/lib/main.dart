@@ -162,18 +162,25 @@ class _PushableButtonState extends State<PushableButton>
     }
   }
 
+  _playButtonDown() {
+    _stopIfAnimating();
+    _animationController.forward();
+  }
+
+  _playButtonUp() {
+    _stopIfAnimating();
+    _animationController.forward();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTapDown: (details) {
-        _stopIfAnimating();
-        _animationController.forward();
+        _playButtonDown();
         widget.onPressed?.call();
       },
-      onTapUp: (details) {
-        _stopIfAnimating();
-        _animationController.reverse();
-      },
+      onTapUp: (details) => _playButtonUp(),
+      onPanEnd: (details) => _playButtonUp(),
       child: Stack(
         children: [
           Container(
